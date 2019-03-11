@@ -25,6 +25,23 @@ void	clear_buffer(t_test* test)
 	}
 }
 
+void	color_buffer(t_test* test, SDL_Color* color)
+{
+	int	x;
+	int	y;
+
+	y = -1;
+	while (++y < WINDOW_HEIGHT)
+	{
+		x = -1;
+		while (++x < WINDOW_WIDTH)
+			test->buff[y * WINDOW_WIDTH + x] = color->r << 24 |
+			color->g << 16 |
+			color->b << 8 |
+			color->a;
+	}
+}
+
 void	screen_upd(t_test* test)
 {
 	SDL_UpdateTexture(test->tex, NULL, test->buff,

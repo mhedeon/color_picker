@@ -42,24 +42,68 @@ SDL_Color hsv2rgb(double h, double s, double v)
 	return ((SDL_Color) { 0, 0, 0, 0 });
 }
 
-void draw_palette(t_test *test, double h)
+
+
+void draw_sv(t_test* test, SDL_Rect* pal)
 {
-	for (int y = 0; y < 360; y++)
+	int x;
+	int y;
+
+	y = pal->y - 1;
+	while (++y < (pal->y + pal->h))
 	{
-		for (int x = 0; x < 360; x++)
+		x = pal->x - 1;
+		while (++x < (pal->x + pal->h))
 		{
-			test->color = hsv2rgb((double)h, (double)(x / 359.0), (double)(y / 359.0));
-			set_pixel(test, &test->color, x + 50, 360 + 50 - y);
+			test->color = hsv2rgb(test->hsv.h, (x - (double)pal->x) / (double)pal->h, 1.0 - (y - (double)pal->y) / (double)pal->h);
+			set_pixel(test, &test->color, x , y);
 		}
 	}
-	for (h = 0; h < 360; h++)
+}
+
+void draw_hue(t_test* test, SDL_Rect* pal)
+{
+	int x;
+	int h;
+	int width;
+
+	width = pal->h / 18;
+	h = -1;
+	while (++h < (double)pal->h)
+	{
+		test->color = hsv2rgb((double)(h * 360.0 / pal->h), 1.0, 1.0);
+		x = pal->x + pal->h + width - 1;
+		while (++x < pal->x + pal->h + width * 2)
+		{
+			set_pixel(test, &test->color, x, pal->y + h);
+		}
+	}
+}
+
+int in_hue(int x, int y, SDL_Rect* pal)
+{
+	int width = pal->h / 18;
+
+	if (y < pal->y || y >= (pal->y + pal->h))
+		return (0);
+	if (x < (pal->x + pal->h + width) || x >= (pal->x + pal->h + width * 2))
+		return (0);
+	return (1);
+}
+
+void draw_palette(t_test *test, SDL_Rect *pal)
+{
+	color_buffer(test, &(SDL_Color) { 100, 100, 100, 0 });
+	draw_sv(test, pal);
+	draw_hue(test, pal);
+	/*for (int h = 0; h < 360; h++)
 	{
 		test->color = hsv2rgb((double)h, 1.0, 1.0);
 		for (int x = 0; x < 20; x++)
 		{
 			set_pixel(test, &test->color, x + 450, 360 + 50 - (int)h);
 		}
-	}
+	}*/
 }
 
 #endif

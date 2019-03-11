@@ -1,5 +1,9 @@
 #include "header.h"
 
+// TODO: code optimisation
+// TODO: sliders
+// TODO: universal data structure
+// TODO: getter + setter
 
 int main(int ac, char **av)
 {
@@ -8,9 +12,11 @@ int main(int ac, char **av)
 		return (0);
 	if (!init(test))
 		return (0);
-	
-	draw_palette(test, 0);
 
+	test->hsv = (t_hsv) { 0, 0, 0 };
+	SDL_Rect pal = (SDL_Rect) { 0, 50, 0, 180 };
+	
+	draw_palette(test, &pal);
 	screen_upd(test);
 
 	SDL_Event e;
@@ -20,9 +26,10 @@ int main(int ac, char **av)
 			break ;
 		int x, y;
 		if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT))
-			if (x >= 450 && x <= 470 && y >= 50 && y <= 410)
+			if (in_hue(x, y, &pal))
 			{
-				draw_palette(test, (double)(360 - y + 50));
+				test->hsv.h = (double)(y - 50.0);
+				draw_palette(test, &pal);
 				screen_upd(test);
 			}
 

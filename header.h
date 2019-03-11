@@ -13,6 +13,13 @@
 
 # define KEY e.type == SDL_KEYDOWN && e.key.keysym.sym
 
+typedef struct	s_hsv
+{
+	double		h;
+	double		s;
+	double		v;
+}				t_hsv;
+
 typedef struct	s_test
 {
 	SDL_Window* win;
@@ -20,7 +27,7 @@ typedef struct	s_test
 	SDL_Texture* tex;
 	Uint32* buff;
 	SDL_Color color;
-
+	t_hsv hsv;
 }				t_test;
 
 
@@ -39,13 +46,15 @@ int error_log(char* message);
 **	color.c
 */
 SDL_Color hsv2rgb(double h, double s, double v);
-void draw_palette(t_test* test, double h);
+void draw_palette(t_test* test, SDL_Rect *pal);
+int in_hue(int x, int y, SDL_Rect* pal);
 
 /*
 **	window.c
 */
 void set_pixel(t_test* test, SDL_Color* color, int x, int y);
 void clear_buffer(t_test* test);
+void	color_buffer(t_test* test, SDL_Color* color);
 void screen_upd(t_test* test);
 
 
