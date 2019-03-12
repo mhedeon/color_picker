@@ -1,15 +1,15 @@
 #include "header.h"
 
-void	set_pixel(t_test* test, SDL_Color* color, int x, int y)
+void	set_pixel(t_window* window, SDL_Color* color, int x, int y)
 {
-	test->buff[y * WINDOW_WIDTH + x] =
+	window->buff[y * WINDOW_WIDTH + x] =
 		color->r << 24 |
 		color->g << 16 |
 		color->b << 8 |
 		color->a;
 }
 
-void	clear_buffer(t_test* test)
+void	clear_buffer(t_window* window)
 {
 	int	x;
 	int	y;
@@ -19,13 +19,36 @@ void	clear_buffer(t_test* test)
 	{
 		x = -1;
 		while (++x < WINDOW_WIDTH)
-			test->buff[y * WINDOW_WIDTH + x] = 0 << 16 |
+			window->buff[y * WINDOW_WIDTH + x] = 0 << 16 |
 			0 << 8 |
 			0;
 	}
 }
 
-void	color_buffer(t_test* test, SDL_Color* color)
+void color_area(t_window* window, SDL_Rect* rect, SDL_Color* color)
+{
+	int x;
+	int y;
+	int h;
+	int w;
+
+	h = rect->y + rect->h;
+	w = rect->x + rect->w;
+	y = rect->y - 1;
+	while (++y < h)
+	{
+		x = rect->x - 1;
+		while (++x < w)
+		{
+			window->buff[y * WINDOW_WIDTH + x] = color->r << 24 |
+				color->g << 16 |
+				color->b << 8 |
+				color->a;
+		}
+	}
+}
+
+void	color_buffer(t_window* window, SDL_Color* color)
 {
 	int	x;
 	int	y;
@@ -35,18 +58,18 @@ void	color_buffer(t_test* test, SDL_Color* color)
 	{
 		x = -1;
 		while (++x < WINDOW_WIDTH)
-			test->buff[y * WINDOW_WIDTH + x] = color->r << 24 |
+			window->buff[y * WINDOW_WIDTH + x] = color->r << 24 |
 			color->g << 16 |
 			color->b << 8 |
 			color->a;
 	}
 }
 
-void	screen_upd(t_test* test)
+void	screen_upd(t_window* window)
 {
-	SDL_UpdateTexture(test->tex, NULL, test->buff,
+	SDL_UpdateTexture(window->tex, NULL, window->buff,
 		WINDOW_WIDTH * sizeof(Uint32));
-	SDL_RenderClear(test->ren);
-	SDL_RenderCopy(test->ren, test->tex, NULL, NULL);
-	SDL_RenderPresent(test->ren);
+	SDL_RenderClear(window->ren);
+	SDL_RenderCopy(window->ren, window->tex, NULL, NULL);
+	SDL_RenderPresent(window->ren);
 }
